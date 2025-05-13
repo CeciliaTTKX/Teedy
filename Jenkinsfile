@@ -24,6 +24,8 @@ DOCKER_IMAGE = 'ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
         stage('Building image') { 
             steps { 
                 script { 
+                    sh "ping -c 5 registry.hub.docker.com"
+                    sh "curl -v https://registry.hub.docker.com/v2/"
                     // assume Dockerfile locate at root  
                     sh "sudo docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
                 } 
@@ -33,8 +35,6 @@ DOCKER_IMAGE = 'ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
         stage('Upload image') { 
             steps { 
                 script { 
-                        sh "ping -c 5 registry.hub.docker.com"
-                        sh "curl -v https://registry.hub.docker.com/v2/"
                         // sign in Docker Hub 
                         docker.withRegistry('https://registry.hub.docker.com', '1') { 
                         // 推送镜像
