@@ -33,8 +33,10 @@ DOCKER_IMAGE = 'ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
         stage('Upload image') { 
             steps { 
                 script { 
+                        sh "ping -c 5 registry.hub.docker.com"
+                        sh "curl -v https://registry.hub.docker.com/v2/"
                         // sign in Docker Hub 
-                        docker.withRegistry('https://hub.docker.com/r/ceciliattkx/teedy-app', '1') { 
+                        docker.withRegistry('https://registry.hub.docker.com', '1') { 
                         // 推送镜像
                         sh "sudo docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                         // 可选：标记为latest
