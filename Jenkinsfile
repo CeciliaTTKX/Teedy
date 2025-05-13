@@ -3,7 +3,7 @@ pipeline {
     environment { 
 // define environment variable 
 // Jenkins credentials configuration 
-        DOCKER_HUB_CREDENTIALS = credentials('admin/******') // Docker Hub credentials ID store in Jenkins 
+        DOCKER_HUB_CREDENTIALS = credentials('1') // Docker Hub credentials ID store in Jenkins 
 // Docker Hub Repository's name 
 DOCKER_IMAGE = 'Ceciliattkx/teedy-app' // your Docker Hub user name and Repository's name 
         DOCKER_TAG = "${env.BUILD_NUMBER}" // use build number as tag 
@@ -34,7 +34,7 @@ DOCKER_IMAGE = 'Ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
             steps { 
                 script { 
                         // sign in Docker Hub 
-                        docker.withRegistry('https://registry.hub.docker.com', 'admin/******') { 
+                        docker.withRegistry('https://registry.hub.docker.com', '1') { 
                         // push image 
                         docker.image("${env.DOCKER_IMAGE}:${env.DOCKER_TAG}").push() 
                         // ：optional: label latest 
