@@ -25,7 +25,7 @@ DOCKER_IMAGE = 'Ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
             steps { 
                 script { 
                     // assume Dockerfile locate at root  
-                    sh "sudo docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}."
+                    sh "sudo docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
                 } 
             } 
         } 
