@@ -3,7 +3,7 @@ pipeline {
     environment { 
 // define environment variable 
      DOCKER_USERNAME = 'ceciliattkx'
-    DOCKER_PASSWORD = '8518Hee225' // 不推荐明文存储
+    DOCKER_PASSWORD = '8518He225' // 不推荐明文存储
 // Jenkins credentials configuration 
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials') // Docker Hub credentials ID store in Jenkins 
 // Docker Hub Repository's name 
