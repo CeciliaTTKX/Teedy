@@ -2,8 +2,8 @@ pipeline {
     agent any 
     environment { 
 // define environment variable 
-     DOCKER_USERNAME = 'ceciliattkx'
-    DOCKER_PASSWORD = '8518He225' // 不推荐明文存储
+    //  DOCKER_USERNAME = 'ceciliattkx'
+    // DOCKER_PASSWORD = '8518He225' // 不推荐明文存储
 // Jenkins credentials configuration 
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials') // Docker Hub credentials ID store in Jenkins 
 // Docker Hub Repository's name 
@@ -25,7 +25,7 @@ DOCKER_IMAGE = 'ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
 
         stage('Login to Docker Hub') {
             steps {
-                sh "docker login -u ${env.DOCKER_USERNAME} -p ${env.DOCKER_PASSWORD}"
+                sh "docker login -u ceciliattkx -p 8518He225"
             }
         }
 
