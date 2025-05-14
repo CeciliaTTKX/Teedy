@@ -1,13 +1,12 @@
 pipeline { 
     agent any 
     environment { 
-        // 定义环境变量 
-        // Jenkins凭证配置 - 暂时注释掉，改用手动登录
-        // DOCKER_HUB_CREDENTIALS = credentials('1') 
-        
-        // Docker Hub仓库名称
-        DOCKER_IMAGE = 'ceciliattkx/teedy-app' 
-        DOCKER_TAG = "${env.BUILD_NUMBER}" 
+// define environment variable 
+// Jenkins credentials configuration 
+        DOCKER_HUB_CREDENTIALS = credentials('1') // Docker Hub credentials ID store in Jenkins 
+// Docker Hub Repository's name 
+DOCKER_IMAGE = 'ceciliattkx/teedy-app' // your Docker Hub user name and Repository's name 
+        DOCKER_TAG = "${env.BUILD_NUMBER}" // use build number as tag 
     } 
     stages { 
         stage('Build') { 
@@ -16,49 +15,45 @@ pipeline {
                     branches: [[name: '*/master']],  
                     extensions: [],  
                     userRemoteConfigs: [[url: 'https://github.com/CeciliaTTKX/Teedy.git']] 
+                    // your github Repository 
                 ) 
                 sh 'mvn -B -DskipTests clean package' 
             } 
         } 
-        
-        // 构建Docker镜像
+// Building Docker images 
         stage('Building image') { 
             steps { 
                 script { 
+                    // assume Dockerfile locate at root  
                     sh "sudo docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
                 } 
             } 
         } 
-        
-        // 手动登录Docker Hub
-        stage('Manual Docker Login') {
-            steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    input message: '请在Jenkins服务器上手动登录Docker Hub', ok: '已完成登录，继续执行'
-                    sh 'echo "请确保已在Jenkins服务器上执行: docker login"'
-                }
-            }
-        }
-        
-        // 上传Docker镜像到Docker Hub
+// Uploading Docker images into Docker Hub 
         stage('Upload image') { 
             steps { 
                 script { 
-                    // 移除自动登录，假设用户已手动登录
-                    sh "sudo docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-                    sh "sudo docker tag ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ${env.DOCKER_IMAGE}:latest"
-                    sh "sudo docker push ${env.DOCKER_IMAGE}:latest"
+                        // sign in Docker Hub 
+                        docker.withRegistry('https://registry.hub.docker.com', '1') { 
+                        // 推送镜像
+                        sh "sudo docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                        // 可选：标记为latest
+                        sh "sudo docker tag ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ${env.DOCKER_IMAGE}:latest"
+                        sh "sudo docker push ${env.DOCKER_IMAGE}:latest"
+                    } 
                 } 
             } 
         }
-        
-        // 运行Docker容器
+    // Running Docker container 
         stage('Run containers') { 
             steps { 
                 script { 
+                    // 如果存在则停止并删除容器
                     sh "sudo docker stop teedy-container-8081 || true"
                     sh "sudo docker rm teedy-container-8081 || true"
+                    // 运行容器
                     sh "sudo docker run --name teedy-container-8081 -d -p 8081:8080 ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                    // 可选：列出所有teedy容器
                     sh "sudo docker ps --filter \"name=teedy-container\""
                 } 
             } 
