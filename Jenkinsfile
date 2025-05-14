@@ -2,6 +2,8 @@ pipeline {
     agent any 
     environment { 
 // define environment variable 
+     DOCKER_USERNAME = 'ceciliattkx'
+    DOCKER_PASSWORD = '8518Hee225' // 不推荐明文存储
 // Jenkins credentials configuration 
         DOCKER_HUB_CREDENTIALS = credentials('dockerhub_credentials') // Docker Hub credentials ID store in Jenkins 
 // Docker Hub Repository's name 
@@ -20,6 +22,13 @@ DOCKER_IMAGE = 'ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
                 sh 'mvn -B -DskipTests clean package' 
             } 
         } 
+
+        stage('Login to Docker Hub') {
+            steps {
+                sh "docker login -u ${env.DOCKER_USERNAME} -p ${env.DOCKER_PASSWORD}"
+            }
+        }
+
 // Building Docker images 
         stage('Building image') { 
             steps { 
@@ -34,13 +43,14 @@ DOCKER_IMAGE = 'ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
             steps { 
                 script { 
                         // sign in Docker Hub 
-                        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') { 
+                    //     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') 
+                    // { 
                         // 推送镜像
                         sh "sudo docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                         // 可选：标记为latest
                         sh "sudo docker tag ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ${env.DOCKER_IMAGE}:latest"
                         sh "sudo docker push ${env.DOCKER_IMAGE}:latest"
-                    } 
+                    // } 
                 } 
             } 
         }
