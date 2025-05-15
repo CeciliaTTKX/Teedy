@@ -38,7 +38,7 @@ DOCKER_IMAGE = 'ceciliattkx/teedy-app' // your Docker Hub user name and Reposito
                         docker.withRegistry('https://registry.hub.docker.com', 'dockerhub_credentials') 
                     { 
                         // 推送镜像
-                        sh "docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}:41"
+                        sh "docker push ${env.DOCKER_IMAGE}:41"
                     } 
                 } 
             } 
